@@ -1,10 +1,13 @@
 .calendar {
+    $betweenbackground-color:rgba(255, 139, 136, .2);
+
     font-family: '微軟正黑體';
     display: inline-flex;
+    position: relative;
 
     .calendar_box {
         border: solid 1px #e3e3e3;
-        &:first-child {
+        &:not(:last-child) {
             margin-right: 10px;
         }
     }
@@ -34,26 +37,24 @@
         grid-template: repeat(6, 40px) / repeat(7, 40px);
         background-color: #f1f1f1;
     }
+
     .date {
         &:not(:empty) {
             background-color: #fff;
         }
-    }
-    .disabled {
-        color: #ddd;
-        cursor: not-allowed;
-    }
-    .isBetween {
-        &.date {
-            background-color: rgba(255, 139, 136, .2);
+        &.isBetween {
+            background-color: $betweenbackground-color;
         }
         &.startDay {
+            background-color: $betweenbackground-color;
             background-image: linear-gradient(to right, #fff 50%, transparent 50%);
         }
         &.endDay {
+            background-color: $betweenbackground-color;
             background-image: linear-gradient(to left, #fff 50%, transparent 50%);
         }
     }
+
     .date_box {
         display: flex;
         flex-direction: column;
@@ -73,6 +74,7 @@
             background-color: #f1f1f1;
         }
     }
+
     .active {
         .date_box {
             background-color: #ff615d;
@@ -80,6 +82,65 @@
         }
         .txt {
             font-weight: bold;
+        }
+    }
+
+    .prev,
+    .next {
+        position: absolute;
+        background-color: transparent;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        outline: none;
+        top: 10px;
+        left: 45px;
+        cursor: pointer;
+        &:hover {
+            background-color: #f7f7f7;
+        }
+        &:before {
+            content: '';
+            border: 3px solid #e10500;
+            width: 10px;
+            height: 10px;
+            border-left-width: 0;
+            border-top-width: 0;
+            transform: rotate(135deg);
+            margin-right: -5px;
+        }
+        &.disabled {
+            &:hover {
+                background-color: transparent;
+            }
+        }
+    }
+
+    .next {
+        left: inherit;
+        right: 45px;
+        &:before {
+            transform: rotate(-45deg);
+            margin-right: 0;
+            margin-left: -5px;
+        }
+    }
+
+    .disabled {
+        color: #bebebe;
+        cursor: not-allowed;
+        &:before {
+            border-color: #bebebe;
+        }
+        .date_box {
+            &:hover {
+                background-color: transparent;
+            }
+            cursor: not-allowed;
         }
     }
 }

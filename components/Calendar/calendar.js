@@ -5,6 +5,14 @@ import moment from 'moment';
 import './calendar.scss';
 
 class CalendarBox extends Component {
+    static defaultProps = {
+        startTxt: '去程',
+        endTxt: '回程',
+        minDay: null,
+        maxDay: null,
+        year: moment().format('YYYY'),
+        month: moment().format('MM'),
+    };
     calcDayArray (daysLength) {
         const {
             year,
@@ -13,21 +21,28 @@ class CalendarBox extends Component {
             selectedEndDate,
             startTxt,
             endTxt,
+            minDay,
+            maxDay,
         } = this.props;
 
         return [...new Array(daysLength)].map((v, i) => {
+            // 天數日期
             const date = i + 1;
+            const thisDay = moment(`${year}-${month}-${date}`, 'YYYY-MM-DD');
+            const isStart = thisDay.isSame(selectedStartDate);
+            const isEnd = thisDay.isSame(selectedEndDate);
             const dateObj =  {
                 year,
                 month,
                 date,
-                active: date === selectedStartDate || date === selectedEndDate,
-                txt: (date === selectedStartDate) ?
+                active: isStart || isEnd,
+                txt: isStart ?
                     startTxt :
-                    (date === selectedEndDate) ? endTxt : '',
-                isBetween: date >= selectedStartDate && date <= selectedEndDate,
-                isStart: date === selectedStartDate,
-                isEnd: date === selectedEndDate,
+                    isEnd ? endTxt : '',
+                isBetween: thisDay.isBetween(selectedStartDate, selectedEndDate),
+                isStart,
+                isEnd,
+                isDisabled: (minDay && thisDay.isBefore(minDay)) || (maxDay && thisDay.isAfter(maxDay)),
             };
 
             return dateObj;
@@ -38,7 +53,7 @@ class CalendarBox extends Component {
             year,
             month,
             week,
-            clickDate,
+            onDateClick,
         } = this.props;
 
         // 該月第一天是禮拜幾
@@ -64,7 +79,7 @@ class CalendarBox extends Component {
                                     month={v.month}
                                     date={v.date}
                                     first={v.date === 1 ? firstDay : null}
-                                    onClick={clickDate}
+                                    onClick={onDateClick}
                                     active={v.active}
                                     txt={v.txt}
                                     isBetween={v.isBetween}
@@ -117,6 +132,7 @@ const Date = ({
     const style = !first ? null : {
         'gridColumnStart': first
     };
+    const thisDay = `${year}-${month}-${date}`;
     return (
         <div
             className={cx('date', {
@@ -131,7 +147,12 @@ const Date = ({
             <div
                 className="date_box"
                 onClick={() => {
-                    onClick(`${year}/${month}/${date}`);
+                    if (isDisabled) return;
+                    onClick(thisDay);
+                }}
+                onMouseEnter={() => {
+                    if (isDisabled) return;
+                    console.log('滑鼠入', thisDay);
                 }}
             >
                 <span className="date_num">{date}</span>
@@ -143,44 +164,114 @@ const Date = ({
 
 class Calendar extends Component {
     static defaultProps = {
-        year: moment().format('YYYY'),
-        month: moment().format('MM'),
-        week: ['日', '一', '二', '三', '四', '五', '六'],
         doubleMonth: false, // 單月曆或雙月曆
         doubleClick: false, // 選一天或選兩天
     };
+    state = {
+        calendarStart: this.props.selectedStartDate || moment().format('YYYY-MM'),
+        isMinMonth: false,
+        isMaxMonth: false,
+    };
+    goNextMonth = () => {
+        const {
+            activeEnd,
+            doubleMonth,
+        } = this.props;
+        const {
+            calendarStart,
+            isMaxMonth,
+        } = this.state;
+
+        if (isMaxMonth) return;
+
+        const nextMonth = moment(calendarStart, 'YYYY-MM').add(1, 'months');
+        const nextTwo = moment(calendarStart, 'YYYY-MM').add(2, 'months');
+        const alreadyMax = doubleMonth ?
+            nextTwo.isSame(activeEnd)
+            : nextMonth.isSame(activeEnd);
+
+        this.setState(prevState => {
+            return {
+                calendarStart: nextMonth.format('YYYY-MM'),
+                isMinMonth: false,
+                isMaxMonth: alreadyMax,
+            };
+        });
+    }
+    goPrevMonth = () => {
+        const {
+            activeStart,
+        } = this.props;
+        const {
+            calendarStart,
+            isMinMonth,
+        } = this.state;
+
+        if (isMinMonth) return;
+
+        const prevMonth = moment(calendarStart, 'YYYY-MM').subtract(1, 'months');
+        const alreadyMin = prevMonth.isSame(activeStart);
+
+        this.setState(prevState => {
+            return {
+                calendarStart: prevMonth.format('YYYY-MM'),
+                isMinMonth: alreadyMin,
+                isMaxMonth: false,
+            };
+        });
+    }
     render () {
         const {
             doubleMonth,
             startDate,
             endDate,
+            onDateClick,
+            selectedStartDate,
+            selectedEndDate,
         } = this.props;
 
-        console.log(startDate);
-        const start = startDate.split('-');
-        const end = endDate.split('-');
+        const {
+            calendarStart,
+            isMinMonth,
+            isMaxMonth,
+        } = this.state;
+
+        const start = calendarStart.split('-');
+        const next = moment([start[0], start[1] - 1]).add(1, 'months');
 
         return (
             <div className="calendar">
+                <button
+                    className={cx('prev', {
+                        disabled: isMinMonth,
+                    })}
+                    onClick={this.goPrevMonth}
+                />
+                <button
+                    className={cx('next', {
+                        disabled: isMaxMonth,
+                    })}
+                    onClick={this.goNextMonth}
+                />
                 <CalendarBox
                     year={start[0]}
                     month={start[1]}
                     minDay={startDate}
                     maxDay={endDate}
-                    selectedStartDate={11}
-                    selectedEndDate={20}
-                    startTxt="最早"
-                    endTxt="最晚"
+                    onDateClick={onDateClick}
+                    selectedStartDate={selectedStartDate}
+                    selectedEndDate={selectedEndDate}
                 />
                 {
                     doubleMonth ?
                         <CalendarBox
-                            year={2018}
-                            month={10 + 1}
+                            year={next.format('YYYY')}
+                            month={next.format('MM')}
                             minDay={startDate}
                             maxDay={endDate}
-                            startTxt="最早"
-                            endTxt="最晚"
+                            onDateClick={onDateClick}
+                            selectedStartDate={selectedStartDate}
+                            selectedEndDate={selectedEndDate}
                         /> :
                         null
                 }
@@ -190,8 +281,9 @@ class Calendar extends Component {
 }
 
 Calendar.propTypes = {
-    clickDate: Proptypes.func,
+    onDateClick: Proptypes.func,
     startDate: Proptypes.string,
+    doubleMonth: Proptypes.bool,
 };
 
 export default Calendar;
