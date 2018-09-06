@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import cx from 'classnames';
 import Proptypes from 'prop-types';
 import moment from 'moment';
 import CalendarBox from './CalendarBox';
 import './calendar.scss';
 
-class Calendar extends Component {
+class Calendar extends PureComponent {
     static defaultProps = {
         doubleMonth: false, // 單月曆或雙月曆
         doubleChoose: false, // 選一天或選兩天
