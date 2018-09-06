@@ -3,22 +3,29 @@ import cx from 'classnames';
 import Proptypes from 'prop-types';
 import moment from 'moment';
 
+const Week = () => (
+    <div className="week">
+        <span className="sun holiday">日</span>
+        <span className="mon">一</span>
+        <span className="tue">二</span>
+        <span className="wed">三</span>
+        <span className="thu">四</span>
+        <span className="fri">五</span>
+        <span className="sat holiday">六</span>
+    </div>
+);
+
 const YearMonth = ({
     year,
     month,
     week,
+    isMobile,
 }) => (
     <div className="year_month">
         <p className="title">{`${year}年${month}月`}</p>
-        <div className="week">
-            <span className="sun holiday">日</span>
-            <span className="mon">一</span>
-            <span className="tue">二</span>
-            <span className="wed">三</span>
-            <span className="thu">四</span>
-            <span className="fri">五</span>
-            <span className="sat holiday">六</span>
-        </div>
+        {
+            isMobile ? null : <Week />
+        }
     </div>
 );
 
@@ -80,6 +87,8 @@ class CalendarBox extends Component {
         maxDay: null,
         year: moment().format('YYYY'),
         month: moment().format('MM'),
+        isMobile: false,
+        setHoverDate: () => {},
     };
     calcDayArray (daysLength) {
         const {
@@ -109,10 +118,9 @@ class CalendarBox extends Component {
                 month,
                 date,
                 active: isStart || isEnd,
-                txt: (!doubleChoose) ?
-                    null : isStart ?
-                        startTxt : isEnd ?
-                            endTxt : '',
+                txt: isStart ?
+                    startTxt :
+                    isEnd ? endTxt : '',
                 isBetween,
                 isStart: doubleChoose && isStart, // 是可以選兩天的月曆才加這個class
                 isEnd: doubleChoose && isEnd,
@@ -131,6 +139,7 @@ class CalendarBox extends Component {
             week,
             onDateClick,
             setHoverDate,
+            isMobile,
         } = this.props;
 
         // 該月第一天是禮拜幾
@@ -145,6 +154,7 @@ class CalendarBox extends Component {
                     year={year}
                     month={month}
                     week={week}
+                    isMobile={isMobile}
                 />
                 <div
                     className="month_box"
@@ -178,4 +188,9 @@ class CalendarBox extends Component {
     }
 }
 
+CalendarBox.propTypes = {
+    isMobile: Proptypes.bool,
+};
+
+export { Week };
 export default CalendarBox;
