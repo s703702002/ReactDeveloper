@@ -220,20 +220,20 @@ class OneChoose extends Component {
 storiesOf('Component', module)
     .add('月曆', () => (
         <div>
-            {/*<h2>雙月曆複選</h2>
+            <h2>雙月曆複選</h2>
             <Demo doubleMonth />
             <h2>單月曆複選</h2>
             <Demo startTxt="最早" endTxt="最晚" />
             <h2>雙月曆單選</h2>
             <OneChoose doubleMonth />
             <h2>單月曆單選</h2>
-            <OneChoose />*/}
-            <CalendarM
+            <OneChoose />
+            {/*<CalendarM
                 activeStart="2017-12"
                 activeEnd="2019-02"
                 startDate="2018-09-03"
                 endDate="2018-12-20"
                 selectedStartDate="2018-09-13"
-            />
+            />*/}
         </div>
     ));

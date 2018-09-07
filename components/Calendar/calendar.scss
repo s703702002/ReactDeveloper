@@ -52,6 +52,12 @@
     }
 
     .date {
+        cursor: pointer;
+        &:hover {
+            .date_box {
+                background-color: #f1f1f1;
+            }
+        }
         &:not(:empty) {
             background-color: #fff;
         }
@@ -66,6 +72,15 @@
             background-color: $betweenbackground-color;
             background-image: linear-gradient(to left, #fff 50%, transparent 50%);
         }
+        &.active {
+            .date_box {
+                background-color: #ff615d;
+                color: #fff;
+            }
+            .txt {
+                font-weight: bold;
+            }
+        }
     }
 
     .date_box {
@@ -75,7 +90,6 @@
         justify-content: center;
         height: 100%;
         border-radius: 50%;
-        cursor: pointer;
         .date_num,
         .txt {
             line-height: 1;
@@ -83,9 +97,6 @@
         .txt {
             font-size: 12px;
             margin-top: 5px;
-        }
-        &:hover {
-            background-color: #f1f1f1;
         }
     }
 
@@ -112,16 +123,6 @@
         .endDay {
             font-size: 24px;
             color: #0077b3;
-        }
-    }
-
-    .active {
-        .date_box {
-            background-color: #ff615d;
-            color: #fff;
-        }
-        .txt {
-            font-weight: bold;
         }
     }
 
