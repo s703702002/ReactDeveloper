@@ -5,15 +5,30 @@ import moment from 'moment';
 import CalendarBox, { Week } from './CalendarBox';
 import './calendar.scss';
 
+const DateLabel = ({
+    isStart = false,
+    isActive = false,
+    title,
+    date,
+}) => (
+    <div className={cx({
+        'start_section': isStart,
+        'end_section': !isStart,
+        active: isActive,
+    })}>
+        <h5 className="title">{title}</h5>
+        <div className="date">8月4日</div>
+    </div>
+);
 class CalendarM extends PureComponent {
     static defaultProps = {
         doubleChoose: false, // 選一天或選兩天
     };
     state = {
         calendarStart: this.props.selectedStartDate || moment().format('YYYY-MM'),
-        isMinMonth: false,
-        isMaxMonth: false,
-        hoverDate: null,
+        selectedStartDate: this.props.selectedStartDate || '',
+        selectedEndDate: this.props.selectedEndDate || '',
+        activeInput: 0,
     };
     render () {
         const {
@@ -29,49 +44,47 @@ class CalendarM extends PureComponent {
 
         const {
             calendarStart,
-            hoverDate,
+            activeInput,
         } = this.state;
 
         const props = {
-            minDay: startDate,
-            maxDay: endDate,
+            startDate,
+            endDate,
             onDateClick,
             selectedStartDate,
             selectedEndDate,
             startTxt,
             endTxt,
             doubleChoose,
-            hoverDate,
             isMobile: true,
         };
 
-        const start = calendarStart.split('-');
-        const next = moment([start[0], start[1] - 1]).add(1, 'months');
+        const startMonth = moment(calendarStart).format('YYYY-MM');
+        const nextMonth = moment(calendarStart).add(1, 'months').format('YYYY-MM');
 
         return (
             <div className="calendar">
                 <div className="label_box">
                     <div className="selected_info">
-                        <div className="start_section">
-                            <h5 className="title">最早出發日</h5>
-                            <div className="startDay">8月4日</div>
-                        </div>
-                        <div className="end_section">
-                            <h5 className="title">最晚出發日</h5>
-                            <div className="endDay">8月15日</div>
-                        </div>
+                        <DateLabel
+                            isStart
+                            isActive={activeInput === 0}
+                            title="最早出發日"
+                        />
+                        <DateLabel
+                            isActive={activeInput !== 0}
+                            title="最晚出發日"
+                        />
                     </div>
                     <Week />
                 </div>
                 <div className="calendar_content">
                     <CalendarBox
-                        year={start[0]}
-                        month={start[1]}
+                        startMonth={startMonth}
                         {...props}
                     />
                     <CalendarBox
-                        year={next.format('YYYY')}
-                        month={next.format('MM')}
+                        startMonth={nextMonth}
                         {...props}
                     />
                 </div>

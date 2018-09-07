@@ -1,7 +1,12 @@
-.calendar {
-    $betweenbackground-color:rgba(255, 139, 136, .2);
-    $border-color: #e3e3e3;
+$betweenbackground-color:rgba(255, 139, 136, .2);
+$border-color: #e3e3e3;
+$red: #e10500;
+$margin_top_gap: 120px; 
+$date_box_width_mobile: 45px;
+$date_box_width_pc: 40px;
 
+.calendar {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
     font-family: '微軟正黑體';
     position: fixed;
     width: 100vw;
@@ -9,33 +14,34 @@
     top: 0;
     left: 0;
     z-index: 10;
+    background-color: #f1f1f1;
+    text-align: center;
 
     .calendar_content {
-        height: 100%;
         overflow-y: auto;
-        margin-top: 100px;
+        height: calc(100% - #{$margin_top_gap});
+        margin-top: $margin_top_gap;
     }
 
     .calendar_box {
-        border: solid 1px $border-color;
+        border-top: 1px solid $border-color;
+        border-bottom: 1px solid $border-color;
         background-color: #fff;
     }
 
     .year_month {
-        text-align: center;
         border-bottom: solid 1px $border-color;
         padding: 10px 0;
         .title {
             font-size: 20px;
             margin: 0;
-            color: #e10500;
+            color: $red;
         }
     }
 
     .week {
         height: 40px;
         display: flex;
-        text-align: center;
         align-items: center;
         >span {
             flex: 1;
@@ -47,11 +53,13 @@
 
     .month_box {
         display: grid;
-        grid-template: repeat(6, 50px) / repeat(7, 1fr);
+        grid-template: repeat(6, #{$date_box_width_mobile}) / repeat(7, 1fr);
         background-color: #f1f1f1;
     }
 
     .date {
+        display: flex;
+        justify-content: center;
         cursor: pointer;
         &:hover {
             .date_box {
@@ -86,8 +94,8 @@
     .date_box {
         display: flex;
         flex-direction: column;
-        text-align: center;
         justify-content: center;
+        width: $date_box_width_mobile;
         height: 100%;
         border-radius: 50%;
         .date_num,
@@ -97,6 +105,9 @@
         .txt {
             font-size: 12px;
             margin-top: 5px;
+            &:empty {
+                display: none;
+            }
         }
     }
 
@@ -112,17 +123,25 @@
         display: flex;
         justify-content: center;
         border-bottom: 1px solid $border-color;
-        > div {
-            flex: 1;
-            text-align: center
-        }
+        padding-top: 10px;
         .title {
             margin: 0;
+            font-size: 16px;
         }
-        .startDay,
-        .endDay {
+        .date,
+        .date {
             font-size: 24px;
             color: #0077b3;
+        }
+    }
+
+    .start_section,
+    .end_section {
+        flex: 0 0 120px;
+        margin: 0 10px;
+        padding-bottom: 3px;
+        &.active {
+            border-bottom: 3px solid $red;
         }
     }
 
@@ -146,7 +165,7 @@
         }
         &:before {
             content: '';
-            border: 3px solid #e10500;
+            border: 3px solid $red;
             width: 10px;
             height: 10px;
             border-left-width: 0;
@@ -195,8 +214,10 @@
         overflow-y: inherit;
         top: auto;
         left: auto;
+        background-color: transparent;
 
         .calendar_box {
+            border: solid 1px $border-color;
             &:not(:last-child) {
                 margin-right: 10px;
             }
@@ -210,10 +231,11 @@
         }
 
         .month_box {
-            grid-template: repeat(6, 40px) / repeat(7, 40px);
+            grid-template: repeat(6, #{$date_box_width_pc}) / repeat(7, #{$date_box_width_pc});
         }
 
         .date_box {
+            width: 100%;
             .txt {
                 margin-top: 0px;
             }

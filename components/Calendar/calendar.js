@@ -92,8 +92,8 @@ class Calendar extends PureComponent {
         } = this.state;
 
         const props = {
-            minDay: startDate,
-            maxDay: endDate,
+            startDate,
+            endDate,
             onDateClick,
             selectedStartDate,
             selectedEndDate,
