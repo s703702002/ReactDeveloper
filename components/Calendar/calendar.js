@@ -71,7 +71,6 @@ class Calendar extends PureComponent {
     //     }));
     // }
     render () {
-        console.log('calendar render!');
         const {
             doubleMonth,
             startDate,

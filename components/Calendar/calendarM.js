@@ -34,7 +34,6 @@ class CalendarM extends PureComponent {
         const {
             startDate,
             endDate,
-            onDateClick,
             selectedStartDate,
             selectedEndDate,
             startTxt,
@@ -50,17 +49,17 @@ class CalendarM extends PureComponent {
         const props = {
             startDate,
             endDate,
-            onDateClick,
             selectedStartDate,
             selectedEndDate,
             startTxt,
             endTxt,
             doubleChoose,
             isMobile: true,
+            onDateClick: (d) => { console.log(d) },
         };
 
-        const startMonth = moment(calendarStart).format('YYYY-MM');
-        const nextMonth = moment(calendarStart).add(1, 'months').format('YYYY-MM');
+        // M版月曆一次顯示7個月
+        const calendarArray = [0, 1, 2, 3, 4, 5, 6].map((v, i) => moment(calendarStart).add(i, 'months').format('YYYY-MM'));
 
         return (
             <div className="calendar">
@@ -79,14 +78,11 @@ class CalendarM extends PureComponent {
                     <Week />
                 </div>
                 <div className="calendar_content">
-                    <CalendarBox
-                        startMonth={startMonth}
-                        {...props}
-                    />
-                    <CalendarBox
-                        startMonth={nextMonth}
-                        {...props}
-                    />
+                    {
+                        calendarArray.map(v => (
+                            <CalendarBox key={v} startMonth={v} {...props} />
+                        ))
+                    }
                 </div>
             </div>
         );

@@ -85,10 +85,10 @@ class CalendarBox extends Component {
         startMonth: moment().format(),
         isMobile: false,
         setHoverDate: () => {},
+        onDateClick: () => {},
     };
-    calcDayArray (daysLength) {
+    calcDayArray (month) {
         const {
-            startMonth,
             selectedStartDate,
             selectedEndDate,
             startTxt,
@@ -96,20 +96,20 @@ class CalendarBox extends Component {
             startDate,
             endDate,
             doubleChoose,
-            // hoverDate,
-            // setHoverDate,
         } = this.props;
+
+        // 該月有幾天
+        const daysLength = month.daysInMonth();
+        const compareFormat = 'day';
 
         // 去回程都已選取
         const hasStartAndEnd = selectedStartDate.length > 0 && selectedEndDate.length > 0;
 
         return [...new Array(daysLength)].map((v, i) => {
             // 天數日期
-            const thisDay = moment(startMonth).add(i, 'days');
-            const isStart = thisDay.isSame(selectedStartDate);
-            const isEnd = thisDay.isSame(selectedEndDate);
-            // const isHover = thisDay.isSame(hoverDate);
-            // const isBetween = doubleChoose && thisDay.isBetween(selectedStartDate, selectedEndDate || hoverDate);
+            const thisDay = moment(month).add(i, 'days');
+            const isStart = thisDay.isSame(selectedStartDate, compareFormat);
+            const isEnd = thisDay.isSame(selectedEndDate, compareFormat);
             const isBetween = doubleChoose && thisDay.isBetween(selectedStartDate, selectedEndDate);
             const dateObj =  {
                 date: thisDay.format(),
@@ -120,9 +120,8 @@ class CalendarBox extends Component {
                 isBetween,
                 isStart: hasStartAndEnd && isStart, // 是可以選兩天的月曆才加這個class
                 isEnd: hasStartAndEnd && isEnd,
-                isDisabled: (startDate && thisDay.isBefore(startDate)) || (endDate && thisDay.isAfter(endDate)),
-                // isHover,
-                // onMouseEnter: setHoverDate,
+                isDisabled: (startDate && thisDay.isBefore(startDate, compareFormat)) ||
+                    (endDate && thisDay.isAfter(endDate, compareFormat)),
             };
 
             return dateObj;
@@ -137,11 +136,9 @@ class CalendarBox extends Component {
         } = this.props;
 
         // 該月第一天是禮拜幾
-        const start = moment(startMonth);
+        const start = moment(startMonth, 'YYYY-MM');
         const firstDay = start.weekday() + 1;
-        // 該月有幾天
-        const lastDay = start.daysInMonth();
-        const dayArray = this.calcDayArray(lastDay);
+        const dayArray = this.calcDayArray(start);
 
         return (
             <div className="calendar_box">
@@ -182,6 +179,7 @@ class CalendarBox extends Component {
 
 CalendarBox.propTypes = {
     isMobile: Proptypes.bool,
+    onDateClick: Proptypes.func,
 };
 
 export { Week };
