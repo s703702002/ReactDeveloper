@@ -9,11 +9,12 @@ $date_box_width_pc: 40px;
 *:before,
 *::after {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-overflow-scrolling: touch;
+    font-family: '微軟正黑體';
 }
 
 .calendar {
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
-    font-family: '微軟正黑體';
     position: fixed;
     width: 100vw;
     height: 100vh;
@@ -67,13 +68,13 @@ $date_box_width_pc: 40px;
         display: flex;
         justify-content: center;
         cursor: pointer;
+        &:not(:empty) {
+            background-color: #fff;
+        }
         &:hover {
             .date_box {
                 background-color: #f1f1f1;
             }
-        }
-        &:not(:empty) {
-            background-color: #fff;
         }
         &.isBetween {
             background-color: $betweenbackground-color;
@@ -95,7 +96,12 @@ $date_box_width_pc: 40px;
                 font-weight: bold;
             }
         }
-    }
+        &.disabled:hover {
+            .date_box {
+                background-color: transparent;
+            }
+        }
+    } 
 
     .date_box {
         display: flex;
@@ -148,6 +154,9 @@ $date_box_width_pc: 40px;
         margin: 0 10px;
         &.active {
             border-bottom: 3px solid $red;
+            &:only-child {
+                border-bottom: none;
+            }
         }
     }
 
@@ -201,12 +210,6 @@ $date_box_width_pc: 40px;
         cursor: not-allowed;
         &:before {
             border-color: #bebebe;
-        }
-        .date_box {
-            &:hover {
-                background-color: transparent;
-            }
-            cursor: not-allowed;
         }
     }
 }

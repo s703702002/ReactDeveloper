@@ -82,7 +82,7 @@ class CalendarBox extends PureComponent {
         endTxt: '回程',
         startDate: null,
         endDate: null,
-        startMonth: moment().format(),
+        startMonth: moment().format('YYYY-MM'),
         isMobile: false,
         setHoverDate: () => {},
         onDateClick: () => {},
@@ -128,6 +128,7 @@ class CalendarBox extends PureComponent {
         });
     }
     render () {
+        console.log('canledar box render!');
         const {
             onDateClick,
             setHoverDate,

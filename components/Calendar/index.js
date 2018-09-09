@@ -244,7 +244,7 @@ storiesOf('Component', module)
                 startDate="2018-09-05"
                 endDate="2019-03-20"
                 selectedStartDate="2018-09-13"
-                selectedEndDate="2018-10-13"
+                // selectedEndDate="2018-10-13"
             />
         </div>
     ));

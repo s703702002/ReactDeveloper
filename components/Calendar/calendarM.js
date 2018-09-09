@@ -68,6 +68,10 @@ class CalendarM extends PureComponent {
             selectedStartDate,
         } = this.state;
 
+        const {
+            doubleChoose,
+        } = this.props;
+
         const isStart = (activeInput === 0);
         const startDateValue = isStart ? date : selectedStartDate;
         const endDateValue = isStart ? '' : date;
@@ -79,7 +83,9 @@ class CalendarM extends PureComponent {
             ...prevState,
             selectedStartDate: startDateValue,
             selectedEndDate: endDateValue,
-            activeInput: isStart ? 1 : 0,
+            activeInput: doubleChoose ?
+                (isStart ? 1 : 0)
+                : 0,
         }));
     }
     switchLabel = (target) => {
@@ -127,15 +133,19 @@ class CalendarM extends PureComponent {
                             isStart
                             isActive={activeInput === 0}
                             title="最早出發日"
-                            date={this.state.selectedStartDate}
+                            date={selectedStartDate}
                             onClick={() => { this.switchLabel(0) }}
                         />
-                        <DateLabel
-                            isActive={activeInput !== 0}
-                            title="最晚出發日"
-                            date={this.state.selectedEndDate}
-                            onClick={() => { this.switchLabel(1) }}
-                        />
+                        {
+                            doubleChoose ?
+                                <DateLabel
+                                    isActive={activeInput !== 0}
+                                    title="最晚出發日"
+                                    date={selectedEndDate}
+                                    onClick={() => { this.switchLabel(1) }}
+                                /> :
+                                null
+                        }
                     </div>
                     <Week />
                 </div>
