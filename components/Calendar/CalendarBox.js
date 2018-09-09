@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import cx from 'classnames';
 import Proptypes from 'prop-types';
 import moment from 'moment';
@@ -74,7 +74,7 @@ const Date = ({
     );
 };
 
-class CalendarBox extends Component {
+class CalendarBox extends PureComponent {
     static defaultProps = {
         selectedStartDate: '',
         selectedEndDate: '',

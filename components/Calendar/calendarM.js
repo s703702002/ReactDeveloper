@@ -10,32 +10,88 @@ const DateLabel = ({
     isActive = false,
     title,
     date,
-}) => (
-    <div className={cx({
-        'start_section': isStart,
-        'end_section': !isStart,
-        active: isActive,
-    })}>
-        <h5 className="title">{title}</h5>
-        <div className="date">8月4日</div>
-    </div>
-);
+    onClick = () => {},
+}) => {
+    const today = moment(date, 'YYYY-MM-DD');
+    const isValid = today.isValid();
+    const MM = today.format('MM');
+    const DD = today.format('DD');
+    return (
+        <div
+            className={cx({
+                'start_section': isStart,
+                'end_section': !isStart,
+                active: isActive,
+            })}
+            onClick={onClick}
+        >
+            <h5 className="title">{title}</h5>
+            <div className="date">
+                {
+                    !isValid ?
+                        null :
+                        `${MM}月${DD}日`
+                }
+            </div>
+        </div>
+    );
+};
 class CalendarM extends PureComponent {
     static defaultProps = {
         doubleChoose: false, // 選一天或選兩天
+        activeInput: 0,
     };
     state = {
         calendarStart: this.props.selectedStartDate || moment().format('YYYY-MM'),
         selectedStartDate: this.props.selectedStartDate || '',
         selectedEndDate: this.props.selectedEndDate || '',
-        activeInput: 0,
+        activeInput: this.props.activeInput,
     };
+    checkDate (isStart, date) {
+        if (isStart) return true;
+
+        const {
+            selectedStartDate,
+        } = this.state;
+
+        if (moment(date).isBefore(selectedStartDate)) {
+            alert('回程不可小於出發日');
+            return false;
+        }
+
+        return true;
+    }
+
+    onDateClick = (date) => {
+        const {
+            activeInput,
+            selectedStartDate,
+        } = this.state;
+
+        const isStart = (activeInput === 0);
+        const startDateValue = isStart ? date : selectedStartDate;
+        const endDateValue = isStart ? '' : date;
+        const isValid = this.checkDate(isStart, date);
+
+        if (!isValid) return;
+
+        this.setState(prevState => ({
+            ...prevState,
+            selectedStartDate: startDateValue,
+            selectedEndDate: endDateValue,
+            activeInput: isStart ? 1 : 0,
+        }));
+    }
+    switchLabel = (target) => {
+        this.setState(prevState => ({
+            ...prevState,
+            activeInput: target,
+        }));
+    }
     render () {
         const {
             startDate,
             endDate,
-            selectedStartDate,
-            selectedEndDate,
             startTxt,
             endTxt,
             doubleChoose,
@@ -44,6 +100,8 @@ class CalendarM extends PureComponent {
         const {
             calendarStart,
             activeInput,
+            selectedStartDate,
+            selectedEndDate,
         } = this.state;
 
         const props = {
@@ -55,7 +113,7 @@ class CalendarM extends PureComponent {
             endTxt,
             doubleChoose,
             isMobile: true,
-            onDateClick: (d) => { console.log(d) },
+            onDateClick: this.onDateClick,
         };
 
         // M版月曆一次顯示7個月
@@ -69,10 +127,14 @@ class CalendarM extends PureComponent {
                             isStart
                             isActive={activeInput === 0}
                             title="最早出發日"
+                            date={this.state.selectedStartDate}
+                            onClick={() => { this.switchLabel(0) }}
                         />
                         <DateLabel
                             isActive={activeInput !== 0}
                             title="最晚出發日"
+                            date={this.state.selectedEndDate}
+                            onClick={() => { this.switchLabel(1) }}
                         />
                     </div>
                     <Week />
@@ -93,6 +155,7 @@ CalendarM.propTypes = {
     onDateClick: Proptypes.func,
     startDate: Proptypes.string,
     doubleChoose: Proptypes.bool,
+    activeInput: Proptypes.oneOf([0, 1]),
 };
 
 export default CalendarM;

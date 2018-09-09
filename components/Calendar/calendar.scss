@@ -5,6 +5,12 @@ $margin_top_gap: 120px;
 $date_box_width_mobile: 45px;
 $date_box_width_pc: 40px;
 
+*,
+*:before,
+*::after {
+    box-sizing: border-box;
+}
+
 .calendar {
     -webkit-tap-highlight-color: rgba(0,0,0,0);
     font-family: '微軟正黑體';
@@ -137,9 +143,9 @@ $date_box_width_pc: 40px;
 
     .start_section,
     .end_section {
+        height: 60px;
         flex: 0 0 120px;
         margin: 0 10px;
-        padding-bottom: 3px;
         &.active {
             border-bottom: 3px solid $red;
         }
