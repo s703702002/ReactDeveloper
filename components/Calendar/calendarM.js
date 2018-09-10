@@ -1,7 +1,10 @@
 import React, { Component, PureComponent } from 'react';
 import cx from 'classnames';
 import Proptypes from 'prop-types';
-import moment from 'moment';
+import {
+    getYearAndMonth,
+    getNowMonth,
+} from '../../utils';
 import CalendarBox, { Week } from './CalendarBox';
 import './calendar.scss';
 
@@ -12,10 +15,10 @@ const DateLabel = ({
     date,
     onClick = () => {},
 }) => {
-    const today = moment(date, 'YYYY-MM-DD');
-    const isValid = today.isValid();
-    const MM = today.format('MM');
-    const DD = today.format('DD');
+    const d = date.split('-');
+    const MM = d.length > 1 && d[1];
+    const DD = d.length > 1 && d[2];
+
     return (
         <div
             className={cx({
@@ -28,7 +31,7 @@ const DateLabel = ({
             <h5 className="title">{title}</h5>
             <div className="date">
                 {
-                    !isValid ?
+                    !date.length ?
                         null :
                         `${MM}月${DD}日`
                 }
@@ -42,7 +45,7 @@ class CalendarM extends PureComponent {
         activeInput: 0,
     };
     state = {
-        calendarStart: this.props.selectedStartDate || moment().format('YYYY-MM'),
+        calendarStart: getNowMonth(),
         selectedStartDate: this.props.selectedStartDate || '',
         selectedEndDate: this.props.selectedEndDate || '',
         activeInput: this.props.activeInput,
@@ -54,7 +57,10 @@ class CalendarM extends PureComponent {
             selectedStartDate,
         } = this.state;
 
-        if (moment(date).isBefore(selectedStartDate)) {
+        const select = new Date(selectedStartDate);
+        const newSelect = new Date(date);
+
+        if (newSelect.getTime() < select.getTime()) {
             alert('回程不可小於出發日');
             return false;
         }
@@ -122,8 +128,12 @@ class CalendarM extends PureComponent {
             onDateClick: this.onDateClick,
         };
 
+        const [year, month] = getYearAndMonth(calendarStart);
+
         // M版月曆一次顯示7個月
-        const calendarArray = [0, 1, 2, 3, 4, 5, 6].map((v, i) => moment(calendarStart).add(i, 'months').format('YYYY-MM'));
+        const calendarArray = [0, 1, 2, 3, 4, 5, 6].map((v, i) => {
+            return new Date(year, month - 1 + i, 1, 8);
+        });
 
         return (
             <div className="calendar">

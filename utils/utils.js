@@ -43,12 +43,25 @@ function toQueryString (data) {
     return string;
 }
 
+function getYearAndMonth (dateStr) {
+    let [year, month] = dateStr.split('-');
+    year = Number(year);
+    month = Number(month);
+    return [year, month];
+}
+
+function getNowMonth () {
+    return new Date(new Date().getFullYear(), new Date().getMonth(), 1, 8).toISOString().slice(0, 7);
+}
+
 const utils = {
     fetchJsToObj: fetchJsToObj,
     findHighestZIndex: findHighestZIndex,
     getDomPosition: getDomPosition,
-    toQueryString: toQueryString
+    toQueryString: toQueryString,
+    getYearAndMonth: getYearAndMonth,
+    getNowMonth: getNowMonth,
 };
 
-export { fetchJsToObj, findHighestZIndex, getDomPosition, toQueryString };
+export { fetchJsToObj, findHighestZIndex, getDomPosition, toQueryString, getYearAndMonth, getNowMonth };
 export { utils as default };
