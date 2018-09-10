@@ -1,7 +1,7 @@
 import React, { Component, PureComponent } from 'react';
 import cx from 'classnames';
 import Proptypes from 'prop-types';
-import moment from 'moment';
+import { getYearAndMonth } from '../../utils';
 
 const Week = () => (
     <div className="week">
@@ -28,7 +28,7 @@ const YearMonth = ({
     </div>
 );
 
-const Date = ({
+const Day = ({
     first,
     isBetween,
     date,
@@ -45,7 +45,10 @@ const Date = ({
     const style = !first ? null : {
         'gridColumnStart': first
     };
-    const thisDay = moment(date);
+    const dateStr = date.toISOString();
+    // 去除0
+    const dateVal = dateStr.slice(0, 10);
+    const showday = dateStr.slice(8, 10).replace(/0+(\d)/gi, '$1');
     return (
         <div
             className={cx('date', {
@@ -59,15 +62,15 @@ const Date = ({
             style={style}
             onClick={() => {
                 if (isDisabled) return;
-                onClick(thisDay.format('YYYY-MM-DD'));
+                onClick(dateVal);
             }}
             onMouseEnter={() => {
                 if (isDisabled) return;
-                onMouseEnter(thisDay.format('YYYY-MM-DD'));
+                onMouseEnter(dateVal);
             }}
         >
             <div className="date_box">
-                <span className="date_num">{thisDay.format('D')}</span>
+                <span className="date_num">{showday}</span>
                 <span className="txt">{txt}</span>
             </div>
         </div>
@@ -82,12 +85,12 @@ class CalendarBox extends PureComponent {
         endTxt: '回程',
         startDate: null,
         endDate: null,
-        startMonth: moment().format('YYYY-MM'),
+        // startMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1, 8),
         isMobile: false,
         setHoverDate: () => {},
         onDateClick: () => {},
     };
-    calcDayArray (month) {
+    calcDayArray () {
         const {
             selectedStartDate,
             selectedEndDate,
@@ -96,23 +99,25 @@ class CalendarBox extends PureComponent {
             startDate,
             endDate,
             doubleChoose,
+            startMonth,
         } = this.props;
-
-        // 該月有幾天
-        const daysLength = month.daysInMonth();
-        const compareFormat = 'day';
-
-        // 去回程都已選取
+        const [year, month] = getYearAndMonth(startMonth.toISOString().slice(0, 7))
+        const date = new Date(year, month, 0);
+        const daysLength = date.getDate();
+        const minDate = new Date(startDate).getTime(); // 最小可選日
+        const maxDate = new Date(endDate).getTime(); // 最大可選日
+        const selectStart = new Date(selectedStartDate).getTime(); // 已選出發日
+        const selectedEnd = new Date(selectedEndDate).getTime(); // 已選結束日
         const hasStartAndEnd = selectedStartDate.length > 0 && selectedEndDate.length > 0;
 
         return [...new Array(daysLength)].map((v, i) => {
-            // 天數日期
-            const thisDay = moment(month).add(i, 'days');
-            const isStart = thisDay.isSame(selectedStartDate, compareFormat);
-            const isEnd = thisDay.isSame(selectedEndDate, compareFormat);
-            const isBetween = doubleChoose && thisDay.isBetween(selectedStartDate, selectedEndDate);
+            const thisDay = new Date(year, month - 1, i + 1, 8);
+            const thisTime = thisDay.getTime();
+            const isStart = thisTime === selectStart;
+            const isEnd = thisTime === selectedEnd;
+            const isBetween = doubleChoose && thisTime > selectStart && thisTime < selectedEnd;
             const dateObj =  {
-                date: thisDay.format(),
+                date: thisDay,
                 active: isStart || isEnd,
                 txt: isStart ?
                     startTxt :
@@ -120,15 +125,14 @@ class CalendarBox extends PureComponent {
                 isBetween,
                 isStart: hasStartAndEnd && isStart, // 兩天都選取才加
                 isEnd: hasStartAndEnd && isEnd,
-                isDisabled: (startDate && thisDay.isBefore(startDate, compareFormat)) ||
-                    (endDate && thisDay.isAfter(endDate, compareFormat)),
+                isDisabled: (startDate && thisTime < minDate) ||
+                    (endDate && thisTime > maxDate),
             };
 
             return dateObj;
         });
     }
     render () {
-        console.log('canledar box render!');
         const {
             onDateClick,
             setHoverDate,
@@ -137,15 +141,14 @@ class CalendarBox extends PureComponent {
         } = this.props;
 
         // 該月第一天是禮拜幾
-        const start = moment(startMonth, 'YYYY-MM');
-        const firstDay = start.weekday() + 1;
-        const dayArray = this.calcDayArray(start);
+        const firstDay = startMonth.getDay() + 1;
+        const dayArray = this.calcDayArray();
 
         return (
             <div className="calendar_box">
                 <YearMonth
-                    year={start.format('YYYY')}
-                    month={start.format('MM')}
+                    year={startMonth.getFullYear()}
+                    month={startMonth.getMonth() + 1}
                     isMobile={isMobile}
                 />
                 <div
@@ -155,7 +158,7 @@ class CalendarBox extends PureComponent {
                     {
                         dayArray.map((v, i) => {
                             return (
-                                <Date
+                                <Day
                                     key={v.date}
                                     date={v.date}
                                     first={i === 0 ? firstDay : null}

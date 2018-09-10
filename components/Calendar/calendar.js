@@ -1,7 +1,10 @@
 import React, { Component, PureComponent } from 'react';
 import cx from 'classnames';
 import Proptypes from 'prop-types';
-import moment from 'moment';
+import {
+    getYearAndMonth,
+    getNowMonth,
+} from '../../utils';
 import CalendarBox from './CalendarBox';
 import './calendar.scss';
 
@@ -11,10 +14,9 @@ class Calendar extends PureComponent {
         doubleChoose: false, // 選一天或選兩天
     };
     state = {
-        calendarStart: this.props.selectedStartDate || moment().format('YYYY-MM'),
+        calendarStart: this.props.selectedStartDate || getNowMonth(),
         isMinMonth: false,
         isMaxMonth: false,
-        // hoverDate: null,
     };
     goNextMonth = () => {
         const {
@@ -28,15 +30,17 @@ class Calendar extends PureComponent {
 
         if (isMaxMonth) return;
 
-        const nextMonth = moment(calendarStart, 'YYYY-MM').add(1, 'months');
-        const nextTwo = moment(calendarStart, 'YYYY-MM').add(2, 'months');
+        const [year, month] = getYearAndMonth(calendarStart);
+        const nextMonth = new Date(year, month, 1, 8);
+        const nextTwo = new Date(year, month + 1, 1, 8);
+        const actEnd = new Date(activeEnd);
         const alreadyMax = doubleMonth ?
-            nextTwo.isSame(activeEnd)
-            : nextMonth.isSame(activeEnd);
+            nextTwo.getTime() === actEnd.getTime()
+            : nextMonth.getTime() === actEnd.getTime();
 
         this.setState(prevState => {
             return {
-                calendarStart: nextMonth.format('YYYY-MM'),
+                calendarStart: nextMonth.toISOString().slice(0, 7),
                 isMinMonth: false,
                 isMaxMonth: alreadyMax,
             };
@@ -53,23 +57,19 @@ class Calendar extends PureComponent {
 
         if (isMinMonth) return;
 
-        const prevMonth = moment(calendarStart, 'YYYY-MM').subtract(1, 'months');
-        const alreadyMin = prevMonth.isSame(activeStart);
+        const [year, month] = getYearAndMonth(calendarStart);
+        const prevMonth = new Date(year, month - 2, 1, 8);
+        const actStart = new Date(activeStart);
+        const alreadyMin = prevMonth.getTime() === actStart.getTime();
 
         this.setState(prevState => {
             return {
-                calendarStart: prevMonth.format('YYYY-MM'),
+                calendarStart: prevMonth.toISOString().slice(0, 7),
                 isMinMonth: alreadyMin,
                 isMaxMonth: false,
             };
         });
     }
-    // setHoverDate = (dateString) => {
-    //     this.setState(prevState => ({
-    //         ...prevState,
-    //         hoverDate: dateString,
-    //     }));
-    // }
     render () {
         const {
             doubleMonth,
@@ -87,7 +87,6 @@ class Calendar extends PureComponent {
             calendarStart,
             isMinMonth,
             isMaxMonth,
-            // hoverDate,
         } = this.state;
 
         const props = {
@@ -99,12 +98,11 @@ class Calendar extends PureComponent {
             startTxt,
             endTxt,
             doubleChoose,
-            // hoverDate,
-            // setHoverDate: this.setHoverDate,
         };
 
-        const startMonth = moment(calendarStart).format('YYYY-MM');
-        const nextMonth = moment(calendarStart).add(1, 'months').format('YYYY-MM');
+        const [year, month] = getYearAndMonth(calendarStart);
+        const startMonth = new Date(year, month - 1, 1, 8);
+        const nextMonth = new Date(year, month, 1, 8);
 
         return (
             <div className="calendar">

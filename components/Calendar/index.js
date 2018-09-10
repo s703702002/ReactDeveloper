@@ -124,8 +124,8 @@ class Demo extends Component {
                             endTxt={endTxt}
                             activeStart="2017-12"
                             activeEnd="2019-02"
-                            startDate="2018-09-03"
-                            endDate="2018-12-20"
+                            startDate="2018-09-10"
+                            endDate="2019-01-20"
                             selectedStartDate={selectedStartDate}
                             selectedEndDate={selectedEndDate}
                             onDateClick={this.clickDate}
@@ -207,7 +207,7 @@ class OneChoose extends Component {
                             activeStart="2017-12"
                             activeEnd="2019-02"
                             startDate="2018-09-03"
-                            endDate="2018-12-20"
+                            endDate="2019-01-20"
                             selectedStartDate={selectedStartDate}
                             onDateClick={this.clickDate}
                         />
@@ -230,14 +230,12 @@ storiesOf('Component', module)
             <OneChoose />
         </div>
     ))
-    .add('M版月曆', () => (
+    .add('Mobile版月曆', () => (
         <CalendarM
             doubleChoose
-            activeStart="2017-12"
-            activeEnd="2019-02"
-            startDate="2018-09-05"
+            startDate="2018-09-15"
             endDate="2019-03-20"
-            // selectedStartDate="2018-09-13"
+            selectedStartDate="2018-09-20"
             // selectedEndDate="2018-10-13"
         />
     ));
