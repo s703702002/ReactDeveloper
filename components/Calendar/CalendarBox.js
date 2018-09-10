@@ -118,7 +118,7 @@ class CalendarBox extends PureComponent {
                     startTxt :
                     isEnd ? endTxt : '',
                 isBetween,
-                isStart: hasStartAndEnd && isStart, // 是可以選兩天的月曆才加這個class
+                isStart: hasStartAndEnd && isStart, // 兩天都選取才加
                 isEnd: hasStartAndEnd && isEnd,
                 isDisabled: (startDate && thisDay.isBefore(startDate, compareFormat)) ||
                     (endDate && thisDay.isAfter(endDate, compareFormat)),
