@@ -14,7 +14,7 @@ class Calendar extends PureComponent {
         calendarStart: this.props.selectedStartDate || moment().format('YYYY-MM'),
         isMinMonth: false,
         isMaxMonth: false,
-        hoverDate: null,
+        // hoverDate: null,
     };
     goNextMonth = () => {
         const {
@@ -64,12 +64,12 @@ class Calendar extends PureComponent {
             };
         });
     }
-    setHoverDate = (dateString) => {
-        this.setState(prevState => ({
-            ...prevState,
-            hoverDate: dateString,
-        }));
-    }
+    // setHoverDate = (dateString) => {
+    //     this.setState(prevState => ({
+    //         ...prevState,
+    //         hoverDate: dateString,
+    //     }));
+    // }
     render () {
         const {
             doubleMonth,
@@ -87,24 +87,24 @@ class Calendar extends PureComponent {
             calendarStart,
             isMinMonth,
             isMaxMonth,
-            hoverDate,
+            // hoverDate,
         } = this.state;
 
         const props = {
-            minDay: startDate,
-            maxDay: endDate,
+            startDate,
+            endDate,
             onDateClick,
             selectedStartDate,
             selectedEndDate,
             startTxt,
             endTxt,
             doubleChoose,
-            hoverDate,
-            setHoverDate: this.setHoverDate,
+            // hoverDate,
+            // setHoverDate: this.setHoverDate,
         };
 
-        const start = calendarStart.split('-');
-        const next = moment([start[0], start[1] - 1]).add(1, 'months');
+        const startMonth = moment(calendarStart).format('YYYY-MM');
+        const nextMonth = moment(calendarStart).add(1, 'months').format('YYYY-MM');
 
         return (
             <div className="calendar">
@@ -121,15 +121,13 @@ class Calendar extends PureComponent {
                     onClick={this.goNextMonth}
                 />
                 <CalendarBox
-                    year={start[0]}
-                    month={start[1]}
+                    startMonth={startMonth}
                     {...props}
                 />
                 {
                     doubleMonth ?
                         <CalendarBox
-                            year={next.format('YYYY')}
-                            month={next.format('MM')}
+                            startMonth={nextMonth}
                             {...props}
                         /> :
                         null

@@ -1,32 +1,36 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import cx from 'classnames';
 import Proptypes from 'prop-types';
 import moment from 'moment';
 
+const Week = () => (
+    <div className="week">
+        <span className="sun holiday">日</span>
+        <span className="mon">一</span>
+        <span className="tue">二</span>
+        <span className="wed">三</span>
+        <span className="thu">四</span>
+        <span className="fri">五</span>
+        <span className="sat holiday">六</span>
+    </div>
+);
+
 const YearMonth = ({
     year,
     month,
-    week,
+    isMobile,
 }) => (
     <div className="year_month">
         <p className="title">{`${year}年${month}月`}</p>
-        <div className="week">
-            <span className="sun holiday">日</span>
-            <span className="mon">一</span>
-            <span className="tue">二</span>
-            <span className="wed">三</span>
-            <span className="thu">四</span>
-            <span className="fri">五</span>
-            <span className="sat holiday">六</span>
-        </div>
+        {
+            isMobile ? null : <Week />
+        }
     </div>
 );
 
 const Date = ({
     first,
     isBetween,
-    year,
-    month,
     date,
     txt = '',
     active = false,
@@ -35,13 +39,13 @@ const Date = ({
     isDisabled = false,
     isHover = false,
     onClick = (date) => { console.log(date) },
-    setHoverDate = () => {},
+    onMouseEnter = () => {},
 }) => {
     if (!date) return <div className="date"></div>;
     const style = !first ? null : {
         'gridColumnStart': first
     };
-    const thisDay = moment(`${year}-${month}-${date}`, 'YYYY-MM-DD').format('YYYY-MM-DD');
+    const thisDay = moment(date);
     return (
         <div
             className={cx('date', {
@@ -53,112 +57,108 @@ const Date = ({
                 isHover: isHover,
             })}
             style={style}
+            onClick={() => {
+                if (isDisabled) return;
+                onClick(thisDay.format('YYYY-MM-DD'));
+            }}
+            onMouseEnter={() => {
+                if (isDisabled) return;
+                onMouseEnter(thisDay.format('YYYY-MM-DD'));
+            }}
         >
-            <div
-                className="date_box"
-                onClick={() => {
-                    if (isDisabled) return;
-                    onClick(thisDay);
-                }}
-                onMouseEnter={() => {
-                    if (isDisabled) return;
-                    setHoverDate(thisDay);
-                }}
-            >
-                <span className="date_num">{date}</span>
+            <div className="date_box">
+                <span className="date_num">{thisDay.format('D')}</span>
                 <span className="txt">{txt}</span>
             </div>
         </div>
     );
 };
 
-class CalendarBox extends Component {
+class CalendarBox extends PureComponent {
     static defaultProps = {
+        selectedStartDate: '',
+        selectedEndDate: '',
         startTxt: '去程',
         endTxt: '回程',
-        minDay: null,
-        maxDay: null,
-        year: moment().format('YYYY'),
-        month: moment().format('MM'),
+        startDate: null,
+        endDate: null,
+        startMonth: moment().format('YYYY-MM'),
+        isMobile: false,
+        setHoverDate: () => {},
+        onDateClick: () => {},
     };
-    calcDayArray (daysLength) {
+    calcDayArray (month) {
         const {
-            year,
-            month,
             selectedStartDate,
             selectedEndDate,
             startTxt,
             endTxt,
-            minDay,
-            maxDay,
+            startDate,
+            endDate,
             doubleChoose,
-            hoverDate,
-            setHoverDate,
         } = this.props;
+
+        // 該月有幾天
+        const daysLength = month.daysInMonth();
+        const compareFormat = 'day';
+
+        // 去回程都已選取
+        const hasStartAndEnd = selectedStartDate.length > 0 && selectedEndDate.length > 0;
 
         return [...new Array(daysLength)].map((v, i) => {
             // 天數日期
-            const date = i + 1;
-            const thisDay = moment(`${year}-${month}-${date}`, 'YYYY-MM-DD');
-            const isStart = thisDay.isSame(selectedStartDate);
-            const isEnd = thisDay.isSame(selectedEndDate);
-            const isHover = thisDay.isSame(hoverDate);
-            const isBetween = doubleChoose && thisDay.isBetween(selectedStartDate, selectedEndDate || hoverDate);
+            const thisDay = moment(month).add(i, 'days');
+            const isStart = thisDay.isSame(selectedStartDate, compareFormat);
+            const isEnd = thisDay.isSame(selectedEndDate, compareFormat);
+            const isBetween = doubleChoose && thisDay.isBetween(selectedStartDate, selectedEndDate);
             const dateObj =  {
-                year,
-                month,
-                date,
+                date: thisDay.format(),
                 active: isStart || isEnd,
-                txt: (!doubleChoose) ?
-                    null : isStart ?
-                        startTxt : isEnd ?
-                            endTxt : '',
+                txt: isStart ?
+                    startTxt :
+                    isEnd ? endTxt : '',
                 isBetween,
-                isStart: doubleChoose && isStart, // 是可以選兩天的月曆才加這個class
-                isEnd: doubleChoose && isEnd,
-                isDisabled: (minDay && thisDay.isBefore(minDay)) || (maxDay && thisDay.isAfter(maxDay)),
-                isHover,
-                setHoverDate,
+                isStart: hasStartAndEnd && isStart, // 兩天都選取才加
+                isEnd: hasStartAndEnd && isEnd,
+                isDisabled: (startDate && thisDay.isBefore(startDate, compareFormat)) ||
+                    (endDate && thisDay.isAfter(endDate, compareFormat)),
             };
 
             return dateObj;
         });
     }
     render () {
+        console.log('canledar box render!');
         const {
-            year,
-            month,
-            week,
             onDateClick,
             setHoverDate,
+            isMobile,
+            startMonth,
         } = this.props;
 
         // 該月第一天是禮拜幾
-        const firstDay = moment([year, month - 1, 1]).weekday() + 1;
-        // 該月有幾天
-        const lastDay = moment([year, month - 1]).daysInMonth();
-        const dayArray = this.calcDayArray(lastDay);
+        const start = moment(startMonth, 'YYYY-MM');
+        const firstDay = start.weekday() + 1;
+        const dayArray = this.calcDayArray(start);
 
         return (
             <div className="calendar_box">
                 <YearMonth
-                    year={year}
-                    month={month}
-                    week={week}
+                    year={start.format('YYYY')}
+                    month={start.format('MM')}
+                    isMobile={isMobile}
                 />
                 <div
                     className="month_box"
                     onMouseLeave={() => { setHoverDate(null) }}
                 >
                     {
-                        dayArray.map(v => {
+                        dayArray.map((v, i) => {
                             return (
                                 <Date
                                     key={v.date}
-                                    year={v.year}
-                                    month={v.month}
                                     date={v.date}
-                                    first={v.date === 1 ? firstDay : null}
+                                    first={i === 0 ? firstDay : null}
                                     onClick={onDateClick}
                                     active={v.active}
                                     txt={v.txt}
@@ -178,4 +178,10 @@ class CalendarBox extends Component {
     }
 }
 
+CalendarBox.propTypes = {
+    isMobile: Proptypes.bool,
+    onDateClick: Proptypes.func,
+};
+
+export { Week };
 export default CalendarBox;
