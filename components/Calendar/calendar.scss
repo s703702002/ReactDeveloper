@@ -1,37 +1,19 @@
 $betweenbackground-color:rgba(255, 139, 136, .2);
 $border-color: #e3e3e3;
 $red: #e10500;
-$margin_top_gap: 120px; 
+$top_gap: 120px; 
 $date_box_width_mobile: 45px;
 $date_box_width_pc: 40px;
 
-*,
-*:before,
-*::after {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
-    -webkit-overflow-scrolling: touch;
-    font-family: '微軟正黑體';
-}
-
-input {
-    font-size: 16px;
-}
-
 .calendar {
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-    top: 0;
-    left: 0;
-    z-index: 10;
+    height: 100%;
     background-color: #f1f1f1;
     text-align: center;
+    padding-top: $top_gap;
 
     .calendar_content {
         overflow-y: auto;
-        height: calc(100% - #{$margin_top_gap});
-        margin-top: $margin_top_gap;
+        height: 100%;
     }
 
     .calendar_box {
@@ -229,6 +211,7 @@ input {
         top: auto;
         left: auto;
         background-color: transparent;
+        padding-top: 0;
 
         .calendar_box {
             border: solid 1px $border-color;
