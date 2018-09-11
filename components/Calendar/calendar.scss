@@ -14,6 +14,10 @@ $date_box_width_pc: 40px;
     font-family: '微軟正黑體';
 }
 
+input {
+    font-size: 16px;
+}
+
 .calendar {
     position: fixed;
     width: 100vw;
@@ -149,11 +153,12 @@ $date_box_width_pc: 40px;
 
     .start_section,
     .end_section {
-        height: 60px;
+        min-height: 60px;
         flex: 0 0 120px;
         margin: 0 10px;
+        border-bottom: 3px solid transparent;
         &.active {
-            border-bottom: 3px solid $red;
+            border-bottom-color: $red;
             &:only-child {
                 border-bottom: none;
             }
