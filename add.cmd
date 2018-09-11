@@ -1,4 +1,11 @@
 @echo off
-set /p id="Input your magaele Name: "
-xcopy _template %cd%\magaele\%id% /D /E /C /R /I /K /Y /F
-echo 'Finish!'
+if [%1] == [] goto Empty
+goto Create
+
+:Empty
+    echo 'please input folder name'
+    goto :eof
+
+:Create
+    xcopy _template %cd%\components\%1 /D /E /C /R /I /K /Y /F
+    echo 'Create Finish!'

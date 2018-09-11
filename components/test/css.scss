@@ -1,0 +1,17 @@
+.test-enter {
+    transform: translateX(100%);
+}
+  
+.test-enter.test-enter-active, {
+    transform: translateX(0);
+    transition: transform 1s ease-in;
+}
+
+.test-leave {
+    transform: translateX(0);
+}
+  
+.test-leave.test-leave-active {
+    transform: translateX(100%);
+    transition: transform 1s ease-in;
+}
