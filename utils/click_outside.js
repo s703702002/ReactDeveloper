@@ -15,13 +15,11 @@ export default class ClickOutside extends Component {
     }
 
     componentDidMount () {
-        document.addEventListener('touchend', this.handle, false);
         document.addEventListener('click', this.handle, false);
     }
 
     componentWillUnmount () {
         this.isUnMounted = true;
-        document.removeEventListener('touchend', this.handle, false);
         document.removeEventListener('click', this.handle, false);
     }
 

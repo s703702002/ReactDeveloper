@@ -1,33 +1,20 @@
 $betweenbackground-color:rgba(255, 139, 136, .2);
 $border-color: #e3e3e3;
 $red: #e10500;
-$margin_top_gap: 120px; 
+$top_gap: 115px; 
 $date_box_width_mobile: 45px;
 $date_box_width_pc: 40px;
 
-*,
-*:before,
-*::after {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
-    -webkit-overflow-scrolling: touch;
-    font-family: '微軟正黑體';
-}
-
 .calendar {
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    background-color: #f1f1f1;
+    height: 100%;
+    background-color: #fff;
     text-align: center;
+    padding-top: $top_gap;
+    padding-bottom: 60px;
 
     .calendar_content {
         overflow-y: auto;
-        height: calc(100% - #{$margin_top_gap});
-        margin-top: $margin_top_gap;
+        height: 100%;
     }
 
     .calendar_box {
@@ -149,11 +136,12 @@ $date_box_width_pc: 40px;
 
     .start_section,
     .end_section {
-        height: 60px;
+        min-height: 60px;
         flex: 0 0 120px;
         margin: 0 10px;
+        border-bottom: 3px solid transparent;
         &.active {
-            border-bottom: 3px solid $red;
+            border-bottom-color: $red;
             &:only-child {
                 border-bottom: none;
             }
@@ -212,18 +200,31 @@ $date_box_width_pc: 40px;
             border-color: #bebebe;
         }
     }
+
+    > .confirm_btn {
+        cursor: pointer;
+        position: fixed;
+        width: 90%;
+        left: 5%;
+        bottom: 10px;
+        z-index: 1;
+        background-color: $red;
+        border: none;
+        outline: none;
+        border-radius: 5px;
+        color: #fff;
+        font-weight: bold;
+        line-height: 40px;
+    }
 }
 
 @media (min-width: 980px) {
     .calendar {
         display: inline-flex;
         position: absolute;
-        width: auto;
         height: auto;
-        overflow-y: inherit;
-        top: auto;
-        left: auto;
         background-color: transparent;
+        padding: 0;
 
         .calendar_box {
             border: solid 1px $border-color;

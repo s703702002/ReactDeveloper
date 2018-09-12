@@ -8,6 +8,15 @@ import {
 import CalendarBox, { Week } from './CalendarBox';
 import './calendar.scss';
 
+function diffDate (date1, date2) {
+    if (!date1.length || !date2.length) return '?';
+    const d1 = new Date(date1).getTime();
+    const d2 = new Date(date2).getTime();
+    const timeDiff = d2 - d1;
+    const dayDiff = timeDiff / (1000 * 3600 * 24);
+    return dayDiff;
+}
+
 const DateLabel = ({
     isStart = false,
     isActive = false,
@@ -43,6 +52,10 @@ class CalendarM extends PureComponent {
     static defaultProps = {
         doubleChoose: false, // 選一天或選兩天
         activeInput: 0,
+        startLabelTitle: '去程',
+        endLabelTitle: '回程',
+        onClickConfirm: () => {},
+        customDiffTxt: txt => txt,
     };
     state = {
         calendarStart: getNowMonth(),
@@ -94,12 +107,14 @@ class CalendarM extends PureComponent {
                 : 0,
         }));
     }
+
     switchLabel = (target) => {
         this.setState(prevState => ({
             ...prevState,
             activeInput: target,
         }));
     }
+
     render () {
         const {
             startDate,
@@ -107,6 +122,10 @@ class CalendarM extends PureComponent {
             startTxt,
             endTxt,
             doubleChoose,
+            startLabelTitle,
+            endLabelTitle,
+            onClickConfirm,
+            customDiffTxt,
         } = this.props;
 
         const {
@@ -135,6 +154,9 @@ class CalendarM extends PureComponent {
             return new Date(year, month - 1 + i, 1, 8);
         });
 
+        const dayDiff = diffDate(selectedStartDate, selectedEndDate);
+        const showTxt = customDiffTxt(dayDiff);
+
         return (
             <div className="calendar">
                 <div className="label_box">
@@ -142,7 +164,7 @@ class CalendarM extends PureComponent {
                         <DateLabel
                             isStart
                             isActive={activeInput === 0}
-                            title="最早出發日"
+                            title={startLabelTitle}
                             date={selectedStartDate}
                             onClick={() => { this.switchLabel(0) }}
                         />
@@ -150,7 +172,7 @@ class CalendarM extends PureComponent {
                             doubleChoose ?
                                 <DateLabel
                                     isActive={activeInput !== 0}
-                                    title="最晚出發日"
+                                    title={endLabelTitle}
                                     date={selectedEndDate}
                                     onClick={() => { this.switchLabel(1) }}
                                 /> :
@@ -166,6 +188,12 @@ class CalendarM extends PureComponent {
                         ))
                     }
                 </div>
+                <button className="confirm_btn" onClick={onClickConfirm}>
+                    確定
+                    {
+                        dayDiff === '?' ? null : <span>{`(${showTxt})`}</span>
+                    }
+                </button>
             </div>
         );
     }
@@ -176,6 +204,10 @@ CalendarM.propTypes = {
     startDate: Proptypes.string,
     doubleChoose: Proptypes.bool,
     activeInput: Proptypes.oneOf([0, 1]),
+    startLabelTitle: Proptypes.string,
+    endLabelTitle: Proptypes.string,
+    onClickConfirm: Proptypes.func,
+    customDiffTxt: Proptypes.func,
 };
 
 export default CalendarM;
