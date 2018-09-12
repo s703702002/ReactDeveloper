@@ -3,6 +3,7 @@ import moment from 'moment';
 import { storiesOf } from '@storybook/react';
 import Calendar from './calendar';
 import CalendarM from './calendarM';
+import PageContainer from '../PageContainer';
 import { ClickOutSide } from '../../utils';
 
 class Demo extends Component {
@@ -254,14 +255,6 @@ class MobileDemo extends Component {
             activeInput,
         } = this.state;
 
-
-        const s = {
-            'position': 'fixed',
-            'bottom': '10px',
-            'right': '10px',
-            'zIndex': '999',
-        };
-
         const st = {
             'border': '1px solid #ddd',
             'margin': '5px',
@@ -269,20 +262,7 @@ class MobileDemo extends Component {
         };
 
         return (
-            <ClickOutSide onClickOutside={() => {
-                this.setState(prevState => ({
-                    ...prevState,
-                    activeInput: null,
-                }));
-            }}>
-                <div style={s}>
-                    <button onClick={this.handleClose}>
-                        close
-                    </button>
-                    <button onClick={this.handleConfirm}>
-                        confirm
-                    </button>
-                </div>
+            <div>
                 <div style={st} onClick={() => { this.showCalendar(0) }}>
                     <span>選擇開始日期: </span>
                     <span>{selectedStartDate}</span>
@@ -291,20 +271,26 @@ class MobileDemo extends Component {
                     <span>選擇結束日期: </span>
                     <span>{selectedEndDate}</span>
                 </div>
-                {
-                    activeInput === null ?
-                        null :
-                        <CalendarM
-                            doubleChoose
-                            selectedStartDate={selectedStartDate}
-                            selectedEndDate={selectedEndDate}
-                            activeInput={activeInput}
-                            startLabelTitle="入住日期"
-                            endLabelTitle="退房日期"
-                            ref={e => { this.calendar = e }}
-                        />
-                }
-            </ClickOutSide>
+                <PageContainer
+                    show={activeInput !== null}
+                    onClickClose={() => { this.setState({ activeInput: null }) }}
+                >
+                    <CalendarM
+                        doubleChoose
+                        selectedStartDate={selectedStartDate}
+                        selectedEndDate={selectedEndDate}
+                        activeInput={activeInput}
+                        startLabelTitle="入住日期"
+                        endLabelTitle="退房日期"
+                        ref={e => { this.calendar = e }}
+                        onClickConfirm={this.handleConfirm}
+                        customDiffTxt={diffDate => {
+                            const showTxt = diffDate + 1;
+                            return '共' + showTxt + '晚';
+                        }}
+                    />
+                </PageContainer>
+            </div>
         );
     }
 }

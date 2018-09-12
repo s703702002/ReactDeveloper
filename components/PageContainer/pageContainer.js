@@ -1,4 +1,5 @@
 import React, { Component, PureComponent } from 'react';
+import ReactDOM from 'react-dom';
 import cx from 'classnames';
 import Proptypes from 'prop-types';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
@@ -14,10 +15,10 @@ class PageContent extends Component {
         onClickClose: Proptypes.func,
     };
     componentDidMount () {
-        console.log('componentDidMount');
+        console.log('Page Content DidMount');
     }
     componentWillUnmount () {
-        console.log('componentWillUnmount');
+        console.log('Page Content WillUnmount');
     }
     render () {
         const {
@@ -37,7 +38,7 @@ const PageContainer = ({
     show,
     onClickClose = () => {},
     children,
-}) => (
+}) => ReactDOM.createPortal(
     <ReactCSSTransitionGroup
         transitionName="show"
         transitionEnterTimeout={300}
@@ -51,7 +52,8 @@ const PageContainer = ({
                 <PageContent onClickClose={onClickClose} key="pageContent">{children}</PageContent> :
                 null
         }
-    </ReactCSSTransitionGroup>
+    </ReactCSSTransitionGroup>,
+    document.body
 );
 
 export default PageContainer;

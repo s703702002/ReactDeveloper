@@ -17,17 +17,11 @@ class Demo extends Component {
         return (
             <div>
                 <button onClick={this.clickShow}>show</button>
-                <button>close</button>
                 <PageContainer
                     show={show}
                     onClickClose={() => { this.setState({ show: false }) }}
                 >
-                    <CalendarM
-                        doubleChoose
-                        startLabelTitle="入住日期"
-                        endLabelTitle="退房日期"
-                    />
-                    <button className="confirm_btn">確定</button>
+                    <p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p>
                 </PageContainer>
             </div>
         );

@@ -8,6 +8,15 @@ import {
 import CalendarBox, { Week } from './CalendarBox';
 import './calendar.scss';
 
+function diffDate (date1, date2) {
+    if (!date1.length || !date2.length) return '?';
+    const d1 = new Date(date1).getTime();
+    const d2 = new Date(date2).getTime();
+    const timeDiff = d2 - d1;
+    const dayDiff = timeDiff / (1000 * 3600 * 24);
+    return dayDiff;
+}
+
 const DateLabel = ({
     isStart = false,
     isActive = false,
@@ -45,6 +54,8 @@ class CalendarM extends PureComponent {
         activeInput: 0,
         startLabelTitle: '去程',
         endLabelTitle: '回程',
+        onClickConfirm: () => {},
+        customDiffTxt: txt => txt,
     };
     state = {
         calendarStart: getNowMonth(),
@@ -96,12 +107,14 @@ class CalendarM extends PureComponent {
                 : 0,
         }));
     }
+
     switchLabel = (target) => {
         this.setState(prevState => ({
             ...prevState,
             activeInput: target,
         }));
     }
+
     render () {
         const {
             startDate,
@@ -111,6 +124,8 @@ class CalendarM extends PureComponent {
             doubleChoose,
             startLabelTitle,
             endLabelTitle,
+            onClickConfirm,
+            customDiffTxt,
         } = this.props;
 
         const {
@@ -138,6 +153,9 @@ class CalendarM extends PureComponent {
         const calendarArray = [0, 1, 2, 3, 4, 5, 6].map((v, i) => {
             return new Date(year, month - 1 + i, 1, 8);
         });
+
+        const dayDiff = diffDate(selectedStartDate, selectedEndDate);
+        const showTxt = customDiffTxt(dayDiff);
 
         return (
             <div className="calendar">
@@ -170,6 +188,12 @@ class CalendarM extends PureComponent {
                         ))
                     }
                 </div>
+                <button className="confirm_btn" onClick={onClickConfirm}>
+                    確定
+                    {
+                        dayDiff === '?' ? null : <span>{`(${showTxt})`}</span>
+                    }
+                </button>
             </div>
         );
     }
@@ -182,6 +206,8 @@ CalendarM.propTypes = {
     activeInput: Proptypes.oneOf([0, 1]),
     startLabelTitle: Proptypes.string,
     endLabelTitle: Proptypes.string,
+    onClickConfirm: Proptypes.func,
+    customDiffTxt: Proptypes.func,
 };
 
 export default CalendarM;

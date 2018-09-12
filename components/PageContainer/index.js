@@ -1,1 +1,1 @@
-export { default as PageContainer } from './pageContainer';
+export { default } from './pageContainer';

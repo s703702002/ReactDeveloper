@@ -1,15 +1,16 @@
 $betweenbackground-color:rgba(255, 139, 136, .2);
 $border-color: #e3e3e3;
 $red: #e10500;
-$top_gap: 120px; 
+$top_gap: 115px; 
 $date_box_width_mobile: 45px;
 $date_box_width_pc: 40px;
 
 .calendar {
     height: 100%;
-    background-color: #f1f1f1;
+    background-color: #fff;
     text-align: center;
     padding-top: $top_gap;
+    padding-bottom: 60px;
 
     .calendar_content {
         overflow-y: auto;
@@ -199,19 +200,31 @@ $date_box_width_pc: 40px;
             border-color: #bebebe;
         }
     }
+
+    > .confirm_btn {
+        cursor: pointer;
+        position: fixed;
+        width: 90%;
+        left: 5%;
+        bottom: 10px;
+        z-index: 1;
+        background-color: $red;
+        border: none;
+        outline: none;
+        border-radius: 5px;
+        color: #fff;
+        font-weight: bold;
+        line-height: 40px;
+    }
 }
 
 @media (min-width: 980px) {
     .calendar {
         display: inline-flex;
         position: absolute;
-        width: auto;
         height: auto;
-        overflow-y: inherit;
-        top: auto;
-        left: auto;
         background-color: transparent;
-        padding-top: 0;
+        padding: 0;
 
         .calendar_box {
             border: solid 1px $border-color;
