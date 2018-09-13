@@ -166,7 +166,7 @@ class Demo extends Component {
                             activeStart={moment().format('YYYY-MM')}
                             activeEnd={moment().add(1, 'years').format('YYYY-MM')}
                             startDate={startDate}
-                            endDate="2019-01-20"
+                            endDate={moment().add(1, 'years').format('YYYY-MM-DD')}
                             selectedStartDate={selectedStartDate}
                             selectedEndDate={selectedEndDate}
                             onDateClick={this.clickDate}
