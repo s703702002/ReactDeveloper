@@ -6,6 +6,8 @@ import CalendarM from './calendarM';
 import PageContainer from '../PageContainer';
 import { ClickOutSide } from '../../utils';
 
+const DateValueErrorMessage = '請輸入正確的日期格式(YYYYMMDD) EX: 20180101';
+
 class Demo extends Component {
     static defaultProps = {
         doubleMonth: false,
@@ -19,23 +21,50 @@ class Demo extends Component {
         activeInput: null,
     };
 
-    checkDate (isStart, date) {
+    checkDate (inputType) {
+        const isStart = inputType === 'start';
         const {
             selectedStartDate,
+            selectedEndDate,
+            startInputValue,
+            endInputValue,
         } = this.state;
+        const inputValue = isStart ? startInputValue : endInputValue;
+        const noChange = isStart ? inputValue === selectedStartDate : inputValue === selectedEndDate;
 
-        if (isStart) return true;
+        // 若input沒有值
+        if (!inputValue.length || noChange) return;
 
-        if (moment(date).isBefore(selectedStartDate)) {
-            alert('回程不可小於出發日');
-            return false;
+        const regex = /^(\d{4})[\-\/]?(\d{2})[\-\/]?(\d{2})$/;
+        const result = inputValue.match(regex);
+
+        // 輸入的字元不合規則
+        if (result === null) {
+            return alert(DateValueErrorMessage);
         }
 
-        return true;
+        const [all, year, month, day] = result;
+        const d = `${year}-${month}-${day}`;
+        const date = moment(d);
+        const calcStartDate = this.calcStartDate();
+
+        // 日期格式正確但是不存在的日期
+        if (!date.isValid()) {
+            return alert('無效的日期');
+        }
+
+        if (date.isBefore(calcStartDate)) {
+            return alert('日期小於最小可選日期');
+        }
+
+        // 都驗證正確 就更換日期
+        this.clickDate(d);
     }
+
     inputChange = (e) => {
-        const { activeInput } = this.state;
         const value = e.target.value;
+        // if (isNaN(value)) return;
+        const { activeInput } = this.state;
         const target = `${activeInput}InputValue`;
         this.setState(prevState => ({
             ...prevState,
@@ -56,9 +85,6 @@ class Demo extends Component {
         const isStart = (activeInput === 'start');
         const startDateValue = isStart ? date : selectedStartDate;
         const endDateValue = isStart ? '' : date;
-        const isValid = this.checkDate(isStart, date);
-
-        if (!isValid) return;
 
         this.setState(prevState => ({
             activeInput: isStart ? 'end' : null,
@@ -67,6 +93,18 @@ class Demo extends Component {
             startInputValue: startDateValue,
             endInputValue: endDateValue,
         }));
+    }
+    calcStartDate () {
+        const {
+            selectedStartDate,
+            activeInput,
+        } = this.state;
+
+        const today = moment();
+        if (activeInput === 'end') {
+            return !selectedStartDate.length ? today.format('YYYY-MM-DD') : selectedStartDate;
+        }
+        return today.format('YYYY-MM-DD');
     }
     render () {
         const {
@@ -89,6 +127,8 @@ class Demo extends Component {
             'borderColor': 'red',
         };
 
+        const startDate = this.calcStartDate();
+
         return (
             <ClickOutSide onClickOutside={() => {
                 this.setState(prevState => ({
@@ -103,7 +143,7 @@ class Demo extends Component {
                     onChange={this.inputChange}
                     onFocus={() => { this.inputFocus('start') }}
                     style={isStart ? style : null}
-                    readOnly
+                    onBlur={() => { this.checkDate('start') }}
                 />
                 {'~'}
                 <input
@@ -113,7 +153,7 @@ class Demo extends Component {
                     onChange={this.inputChange}
                     onFocus={() => { this.inputFocus('end') }}
                     style={isEnd ? style : null}
-                    readOnly
+                    onBlur={() => { this.checkDate('end') }}
                 />
                 {
                     !activeInput ?
@@ -123,9 +163,9 @@ class Demo extends Component {
                             doubleChoose
                             startTxt={startTxt}
                             endTxt={endTxt}
-                            activeStart="2017-12"
-                            activeEnd="2019-02"
-                            startDate="2018-09-10"
+                            activeStart={moment().format('YYYY-MM')}
+                            activeEnd={moment().add(1, 'years').format('YYYY-MM')}
+                            startDate={startDate}
                             endDate="2019-01-20"
                             selectedStartDate={selectedStartDate}
                             selectedEndDate={selectedEndDate}
