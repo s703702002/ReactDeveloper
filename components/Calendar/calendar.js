@@ -15,9 +15,53 @@ class Calendar extends PureComponent {
     };
     state = {
         calendarStart: this.props.selectedStartDate || getNowMonth(),
-        isMinMonth: false,
-        isMaxMonth: false,
+        isMinMonth: this.isMinMonth(),
+        isMaxMonth: this.isMaxMonth(),
     };
+    isMinMonth () {
+        let {
+            activeStart,
+            selectedStartDate,
+        } = this.props;
+
+        // 若沒傳選擇日, 以系統當月計算
+        if (!selectedStartDate.length) selectedStartDate = getNowMonth();
+
+        const [year, month] = getYearAndMonth(selectedStartDate);
+        const prevMonth = new Date(year, month - 1, 1, 8);
+        const actStart = new Date(activeStart);
+        const alreadyMin = prevMonth.getTime() <= actStart.getTime();
+
+        if (!activeStart) return false;
+
+        if (alreadyMin) return true;
+
+        return false;
+    }
+    isMaxMonth () {
+        let {
+            activeEnd,
+            selectedStartDate,
+            doubleMonth,
+        } = this.props;
+
+        // 若沒傳選擇日, 以系統當月計算
+        if (!selectedStartDate.length) selectedStartDate = getNowMonth();
+
+        const [year, month] = getYearAndMonth(selectedStartDate);
+        const nextMonth = new Date(year, month, 1, 8);
+        const nextTwo = new Date(year, month + 1, 1, 8);
+        const actEnd = new Date(activeEnd);
+        const alreadyMax = doubleMonth ?
+            nextTwo.getTime() >= actEnd.getTime()
+            : nextMonth.getTime() >= actEnd.getTime();
+
+        if (!activeEnd) return false;
+
+        if (alreadyMax) return true;
+
+        return false;
+    }
     goNextMonth = () => {
         const {
             activeEnd,
