@@ -117,14 +117,7 @@ class Calendar extends PureComponent {
     render () {
         const {
             doubleMonth,
-            startDate,
-            endDate,
-            onDateClick,
-            selectedStartDate,
-            selectedEndDate,
-            startTxt,
-            endTxt,
-            doubleChoose,
+            ...other,
         } = this.props;
 
         const {
@@ -132,17 +125,6 @@ class Calendar extends PureComponent {
             isMinMonth,
             isMaxMonth,
         } = this.state;
-
-        const props = {
-            startDate,
-            endDate,
-            onDateClick,
-            selectedStartDate,
-            selectedEndDate,
-            startTxt,
-            endTxt,
-            doubleChoose,
-        };
 
         const [year, month] = getYearAndMonth(calendarStart);
         const startMonth = new Date(year, month - 1, 1, 8);
@@ -164,13 +146,13 @@ class Calendar extends PureComponent {
                 />
                 <CalendarBox
                     startMonth={startMonth}
-                    {...props}
+                    {...other}
                 />
                 {
                     doubleMonth ?
                         <CalendarBox
                             startMonth={nextMonth}
-                            {...props}
+                            {...other}
                         /> :
                         null
                 }
