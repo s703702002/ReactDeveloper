@@ -55,10 +55,10 @@
     "classnames": "^2.2.5",
     "moment": "^2.22.1",
     "prop-types": "^15.5.10",
-    "react": "^16.2.0",
+    "react": "^16.5.0",
     "react-addons-css-transition-group": "^15.6.2",
     "react-css-modules": "^4.7.3",
-    "react-dom": "^16.2.0",
+    "react-dom": "^16.5.0",
     "whatwg-fetch": "^2.0.4"
   }
 }
