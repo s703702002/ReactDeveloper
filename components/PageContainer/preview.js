@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { storiesOf } from '@storybook/react';
 import PageContainer from './pageContainer';
-import { CalendarM } from '../Calendar';
 
 class Demo extends Component {
     state = {
@@ -20,8 +19,19 @@ class Demo extends Component {
                 <PageContainer
                     show={show}
                     onClickClose={() => { this.setState({ show: false }) }}
+                    className="custom_class"
                 >
-                    <p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p><p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p>
+                    <h2>我是一個分頁Component</h2>
+                    <p>props:</p>
+                    <p>className: string</p>
+                    <p>onClickClose: func</p>
+                    <p>show: bool (控制分頁是否出現)</p>
+                    <p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p>
+                    <p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p>
+                    <p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p>
+                    <p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p>
+                    <p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p>
+                    <p>內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容內容</p>
                 </PageContainer>
             </div>
         );

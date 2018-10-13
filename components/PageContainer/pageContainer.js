@@ -13,6 +13,7 @@ function FirstChild (props) {
 class PageContent extends Component {
     static propTypes = {
         onClickClose: Proptypes.func,
+        className: Proptypes.string,
     };
     componentDidMount () {
         console.log('Page Content DidMount');
@@ -23,10 +24,11 @@ class PageContent extends Component {
     render () {
         const {
             children,
-            onClickClose
+            onClickClose,
+            className,
         } = this.props;
         return (
-            <div className="page_container">
+            <div className={cx('page_container', className)}>
                 <span className="close" onClick={onClickClose} />
                 {children}
             </div>
@@ -38,6 +40,7 @@ const PageContainer = ({
     show,
     onClickClose = () => {},
     children,
+    className,
 }) => ReactDOM.createPortal(
     <ReactCSSTransitionGroup
         transitionName="show"
@@ -49,7 +52,9 @@ const PageContainer = ({
     >
         {
             show ?
-                <PageContent onClickClose={onClickClose} key="pageContent">{children}</PageContent> :
+                <PageContent onClickClose={onClickClose} key="pageContent" className={className}>
+                    {children}
+                </PageContent> :
                 null
         }
     </ReactCSSTransitionGroup>,
