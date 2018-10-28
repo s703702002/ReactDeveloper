@@ -1,4 +1,4 @@
-import React, { Component, PureComponent } from 'react';
+import React, { Component, PureComponent, memo } from 'react';
 import { storiesOf } from '@storybook/react';
 
 class Counter extends PureComponent {
@@ -87,7 +87,45 @@ class Drag extends Component {
     }
 }
 
+const Item = memo(({ num }) => {
+    console.log('ITEM render');
+    return (
+        <span>
+            {num}
+        </span>
+    );
+});
+
+class TestMemo extends PureComponent {
+    constructor (props) {
+        super(props);
+        this.state = {
+            list: [1, 2, 3, 4, 5]
+        };
+    }
+    handleAdd = () => {
+        this.setState(prevState => ({
+            list: prevState.list.concat([prevState.list.length + 1]),
+        }));
+    }
+    render () {
+        const list = this.state.list;
+        return (
+            <div>
+                <h3>測試memo</h3>
+                {
+                    list.map(v => <Item key={v} num={v} />)
+                }
+                <button onClick={this.handleAdd}>click me for add list</button>
+            </div>
+        );
+    }
+}
+
 storiesOf('Component', module)
     .add('測試測試', () => (
-        <Drag />
+        <div>
+            <Drag />
+            <TestMemo />
+        </div>
     ));
