@@ -1,4 +1,4 @@
-import React, { Component, PureComponent } from 'react';
+import React, { PureComponent, memo } from 'react';
 import cx from 'classnames';
 import Proptypes from 'prop-types';
 import { getYearAndMonth } from '../../utils';
@@ -28,7 +28,22 @@ const YearMonth = ({
     </div>
 );
 
-const Day = ({
+function areEqual (p, n) {
+    if (
+        p.first !== n.first ||
+        p.isBetween !== n.isBetween ||
+        p.active !== n.active ||
+        p.txt !== n.txt ||
+        p.isStart !== n.isStart ||
+        p.isEnd !== n.isEnd ||
+        p.isDisabled !== n.isDisabled ||
+        p.isHover !== n.isHover
+    ) return false;
+    if (p.date.toString() !== n.date.toString()) return false;
+    return true;
+}
+
+const Day = memo(({
     first,
     isBetween,
     date,
@@ -41,6 +56,7 @@ const Day = ({
     onClick = (date) => { console.log(date) },
     onMouseEnter = () => {},
 }) => {
+    console.log('Day RENDER');
     if (!date) return <div className="date"></div>;
     const style = !first ? null : {
         'gridColumnStart': first
@@ -75,7 +91,7 @@ const Day = ({
             </div>
         </div>
     );
-};
+}, areEqual);
 
 class CalendarBox extends PureComponent {
     static defaultProps = {
