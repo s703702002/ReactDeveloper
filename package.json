@@ -4,12 +4,11 @@
   "main": "index.js",
   "description": "",
   "scripts": {
-    "start": "webpack-dev-server --open --colors --progress --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "build:umd": "webpack --progress --config webpack.umd.js",
     "dev:umd": "webpack --watch --progress --config webpack.umd.js",
     "storybook": "start-storybook -p 9001 -c .storybook",
-    "build:story": "build-storybook -c .storybook -o .out && cp -avr .out/* .",
+    "build:story": "build-storybook -c .storybook -o .out && cp -avR .out/* .",
     "prebuild:story": "rm -rf static/"
   },
   "repository": {
@@ -47,7 +46,6 @@
     "style-loader": "^0.18.2",
     "uglifyjs-webpack-plugin": "^1.2.5",
     "webpack": "^3.3.0",
-    "webpack-dev-server": "^2.6.1",
     "webpack-merge": "^4.1.2"
   },
   "dependencies": {
@@ -55,10 +53,10 @@
     "classnames": "^2.2.5",
     "moment": "^2.22.1",
     "prop-types": "^15.5.10",
-    "react": "^16.5.0",
+    "react": "^16.8.6",
     "react-addons-css-transition-group": "^15.6.2",
     "react-css-modules": "^4.7.3",
-    "react-dom": "^16.5.0",
+    "react-dom": "^16.8.6",
     "whatwg-fetch": "^2.0.4"
   }
 }
