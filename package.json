@@ -7,7 +7,7 @@
     "build": "webpack --config webpack.prod.js",
     "build:umd": "webpack --progress --config webpack.umd.js",
     "dev:umd": "webpack --watch --progress --config webpack.umd.js",
-    "storybook": "start-storybook -p 9001 -c .storybook",
+    "start": "start-storybook -p 9001 -c .storybook",
     "build:story": "build-storybook -c .storybook -o .out && cp -avR .out/* .",
     "prebuild:story": "rm -rf static/"
   },
